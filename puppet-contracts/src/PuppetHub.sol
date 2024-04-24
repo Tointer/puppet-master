@@ -15,8 +15,9 @@ contract PuppetHub is OApp {
         uint64 deadline;
     }
 
-    mapping(address => uint) public userOrdersIds;
+    mapping(address => uint[]) public userOrdersIds;
     mapping(uint => Order) public orders;
+    uint public nextOrderId;
 
     function _lzReceive(
         Origin calldata _origin, // struct containing info about the message sender
@@ -31,10 +32,10 @@ contract PuppetHub is OApp {
         bool isNotExpired = order.deadline > block.timestamp;
         bool isMinAmountSame = order.minAmountOut == minAmount;
         bool isTokenSame = order.tokenOut == token;
-        bool isChainSame = order.chainOut == _origin.chainId;
+        bool isChainSame = order.chainOut == _origin.srcEid;
 
         if (isNotExpired && isMinAmountSame && isTokenSame && isChainSame) {
-            IERC20(order.tokenIn).transfer(_origin.sender, order.amountIn);
+            IERC20(order.tokenIn).transfer(address(bytes20(_origin.sender)), order.amountIn);
             delete orders[orderId];
         }
 
@@ -43,19 +44,31 @@ contract PuppetHub is OApp {
 
     function lockAndInitiateOrder(Order memory order) public {
         IERC20(order.tokenIn).transferFrom(msg.sender, address(this), order.amountIn);
-        orders[order.tokenIn].push(order);
+        orders[nextOrderId] = order;
+        nextOrderId++;
     }
 
-    function withdrawOrder(address token, uint256 index) public {
-        require(orders[token][index].deadline < block.timestamp, "Order not expired");
+    function withdrawOrder(uint256 userIndex) public {
+        uint index = userOrdersIds[msg.sender][userIndex];
+        Order memory order = orders[index];
+        require(order.deadline < block.timestamp, "Order not expired");
+        address token = orders[index].tokenIn; 
 
-        Order memory order = orders[token][index];
-        IERC20(token).transfer(msg.sender, order.amountIn);
-        userOrdersIds[msg.sender][index] = userOrdersIds[msg.sender][userOrdersIds[msg.sender].length - 1];
+        IERC20(token).transfer(msg.sender, order.amountIn); //will revert if order not initialized
+        userOrdersIds[msg.sender][userIndex] = userOrdersIds[msg.sender][userOrdersIds[msg.sender].length - 1];
         userOrdersIds[msg.sender].pop();
     }
 
-    function getOrdersLength(address user) public view returns (uint256) {
-        return orders[user].length;
+    function getUserOrdersLength(address user) public view returns (uint256) {
+        return userOrdersIds[user].length;
+    }
+
+    function getUserOrderByIndex(address user, uint256 index) public view returns (Order memory) {
+        uint orderId = userOrdersIds[user][index];
+        return orders[orderId];
+    }
+
+    function getOrderIndexByUserIndex(address user, uint256 index) public view returns (uint256) {
+        return userOrdersIds[user][index];
     }
 }
