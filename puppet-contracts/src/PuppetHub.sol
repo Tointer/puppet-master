@@ -15,7 +15,6 @@ contract PuppetHub is OApp {
         uint64 deadline;
     }
 
-    mapping(address => uint[]) public userOrdersIds;
     mapping(uint => Order) public orders;
     uint public nextOrderId;
 
@@ -48,30 +47,13 @@ contract PuppetHub is OApp {
         nextOrderId++;
     }
 
-    function withdrawOrder(uint256 userIndex) public {
-        uint index = userOrdersIds[msg.sender][userIndex];
-        Order memory order = orders[index];
+    function withdrawOrder(uint256 orderIndex) public {
+        Order memory order = orders[orderIndex];
         require(order.deadline < block.timestamp, "Order not expired");
-        address token = orders[index].tokenIn; 
+        address token = order.tokenIn; 
 
         IERC20(token).transfer(msg.sender, order.amountIn); //will revert if order not initialized
-        userOrdersIds[msg.sender][userIndex] = userOrdersIds[msg.sender][userOrdersIds[msg.sender].length - 1];
-        userOrdersIds[msg.sender].pop();
-
-        delete orders[index];
-    }
-
-    function getUserOrdersLength(address user) public view returns (uint256) {
-        return userOrdersIds[user].length;
-    }
-
-    function getUserOrderByIndex(address user, uint256 index) public view returns (Order memory) {
-        uint orderId = userOrdersIds[user][index];
-        return orders[orderId];
-    }
-
-    function getOrderIndexByUserIndex(address user, uint256 index) public view returns (uint256) {
-        return userOrdersIds[user][index];
+        delete orders[orderIndex];
     }
     
 }
