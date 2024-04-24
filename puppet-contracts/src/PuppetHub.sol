@@ -26,7 +26,7 @@ contract PuppetHub is OApp {
         address _executor, // the Executor address.
         bytes calldata _extraData // arbitrary data appended by the Executor
     ) internal override {
-        (uint orderId, uint minAmount, address token) = abi.decode(payload, (uint, uint, address));
+        (uint orderId, uint minAmount, address token, address payReceiver) = abi.decode(payload, (uint, uint, address, address));
 
         Order memory order = orders[orderId];
         bool isNotExpired = order.deadline > block.timestamp;
@@ -35,7 +35,7 @@ contract PuppetHub is OApp {
         bool isChainSame = order.chainOut == _origin.srcEid;
 
         if (isNotExpired && isMinAmountSame && isTokenSame && isChainSame) {
-            IERC20(order.tokenIn).transfer(address(bytes20(_origin.sender)), order.amountIn);
+            IERC20(order.tokenIn).transfer(payReceiver, order.amountIn);
             delete orders[orderId];
         }
 
@@ -57,6 +57,8 @@ contract PuppetHub is OApp {
         IERC20(token).transfer(msg.sender, order.amountIn); //will revert if order not initialized
         userOrdersIds[msg.sender][userIndex] = userOrdersIds[msg.sender][userOrdersIds[msg.sender].length - 1];
         userOrdersIds[msg.sender].pop();
+
+        delete orders[index];
     }
 
     function getUserOrdersLength(address user) public view returns (uint256) {
@@ -71,4 +73,5 @@ contract PuppetHub is OApp {
     function getOrderIndexByUserIndex(address user, uint256 index) public view returns (uint256) {
         return userOrdersIds[user][index];
     }
+    
 }
