@@ -28,16 +28,17 @@ contract PuppetHub is OApp {
         (uint orderId, uint minAmount, address token) = abi.decode(payload, (uint, uint, address));
 
         Order memory order = orders[orderId];
-        bool isExpired = order.deadline < block.timestamp;
+        bool isNotExpired = order.deadline > block.timestamp;
         bool isMinAmountSame = order.minAmountOut == minAmount;
         bool isTokenSame = order.tokenOut == token;
         bool isChainSame = order.chainOut == _origin.chainId;
 
-        if (!isExpired && isMinAmountSame && isTokenSame && isChainSame) {
+        if (isNotExpired && isMinAmountSame && isTokenSame && isChainSame) {
             IERC20(order.tokenIn).transfer(_origin.sender, order.amountIn);
+            delete orders[orderId];
         }
 
-        //not reverting to not block LZ execution
+        //not reverting to not block LZ execution, resolvers should calculate possible failures
     }
 
     function lockAndInitiateOrder(Order memory order) public {
