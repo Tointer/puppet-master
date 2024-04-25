@@ -3,7 +3,7 @@ pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { OApp, Origin, MessagingFee } from "@layerzero-v2/oapp/OApp.sol";
-//import { IOAppOptionsType3 } from "@layerzero-v2/oapp/interfaces/IOAppOptionsType3.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract TokenHolder is OApp  {
     uint32 public immutable destId;
@@ -12,11 +12,13 @@ contract TokenHolder is OApp  {
     mapping(address => mapping(address => uint)) public balances;
     mapping(bytes32 => bool) public processed;
 
-    constructor(address _endpoint, address _owner, uint16 _destId) OApp(_endpoint, _owner) {
+    constructor(address _endpoint, address _owner, uint16 _destId) OApp(_endpoint, _owner) Ownable(_owner) {
         destId = _destId;
     }
 
     function depositFor(address _token, address _to, address _payReceiver, uint256 _amount, uint _minAmount, uint _orderId, bytes calldata _lzOptions) public {
+        require(_amount >= _minAmount, "Amount less than minAmount");
+
         bytes32 orderHash = keccak256(abi.encode(_orderId, _minAmount, _token));
         require(processed[orderHash] == false, "Order already processed");
         processed[orderHash] = true;
@@ -70,7 +72,10 @@ contract TokenHolder is OApp  {
         address _executor, // the Executor address.
         bytes calldata _extraData // arbitrary data appended by the Executor
     ) internal override {
-        //todo
+        (address token, address from, address to, uint256 amount, bytes32 orderSalt) = abi.decode(payload, (address, address, address, uint256, bytes32));
+
+        IERC20(token).transfer(to, amount);
+        balances[token][from] -= amount;
     }
 
     function createPayload(

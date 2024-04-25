@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { OApp, Origin, MessagingFee } from "@layerzero-v2/oapp/OApp.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract PuppetHub is OApp {
     struct Order{
@@ -17,6 +18,8 @@ contract PuppetHub is OApp {
 
     mapping(uint => Order) public orders;
     uint public nextOrderId;
+
+    constructor(address _endpoint, address _owner) OApp(_endpoint, _owner) Ownable(_owner) {}
 
     function _lzReceive(
         Origin calldata _origin, // struct containing info about the message sender
