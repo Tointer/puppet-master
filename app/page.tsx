@@ -15,17 +15,17 @@ function App() {
   interface CoinParams{
     name: string,
     symbol: string,
-    balance: number,
+    balance: bigint,
   }
 
   //selected coin useState
-  const [selectedCoin, setSelectedCoin] = useState<string>('');
+  const [selectedCoin, setSelectedCoin] = useState<{name: string, symbol: string, balance: bigint} | undefined>();
 
-  function onCoinClick(name: string){
-    setSelectedCoin(name);
+  function onCoinClick(coin: {name: string, symbol: string, balance: bigint}){
+    setSelectedCoin(coin);
   }
 
-  const coins = [{name: 'GMX from Arbitrum', symbol: 'GMX', balance: 120.2}, {name: 'BALD from Base', symbol: 'BALD', balance: 0}];
+  const coins = [{name: 'GMX from Arbitrum', symbol: 'GMX', balance: 1201n * 10n**17n}, {name: 'BALD from Base', symbol: 'BALD', balance: 0n}];
 
   return (
     <div className='flex items-center w-full place-content-center mt-8 gap-8'>
@@ -39,10 +39,10 @@ function App() {
       >
         <div 
         className={'h-full w-full bg-black rounded-2xl bg-clip-padding backdrop-filter backdrop-blur-2xl bg-opacity-10 border border-gray-100 transition-opacity duration-500 ease-out' 
-          + (account && selectedCoin !== '' ? ' opacity-100 visible' : ' opacity-0 invisible')
+          + (account && selectedCoin !== undefined ? ' opacity-100 visible' : ' opacity-0 invisible')
         }
         >
-          <OrderPanel name={selectedCoin} symbol='GMX' balance={10n**19n} />
+          <OrderPanel name={selectedCoin?.name??''} symbol={selectedCoin?.symbol??''} remoteTokenBalance={selectedCoin?.balance??0n} sourceTokenBalance={10n**19n} />
         </div>
       </div>
     </div>

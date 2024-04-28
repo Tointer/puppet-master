@@ -3,33 +3,74 @@
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import { useState } from 'react';
 import TokenInput from '../components/TokenInput';
+import { formatEther, maxUint256, parseEther } from 'viem';
 
 interface SellOrderProps{
-  name: string,
-  symbol: string,
-  balance: bigint,
+    offerTokenSymbol: string,
+    offerTokenBalance: bigint,
+    buyTokenSymbol: string,
+    marketPrice: number,
 }
 
-function SellOrder({name, symbol, balance}: SellOrderProps) {
+const truncate18Decimals = (number: bigint, decimals: number = 4): number => {
+    return Number(number / 10n ** BigInt(18 - decimals)) / 10 ** decimals;
+  };
 
-    const [selectedState, setSelectedState] = useState<'Buy'|'Sell'>('Buy');
+function SellOrder({offerTokenSymbol, offerTokenBalance, buyTokenSymbol, marketPrice}: SellOrderProps) {
 
+    const [tokenAmount, setTokenAmount] = useState<string>('');
+    const [buyTokenAmount, setBuyTokenAmount] = useState<string>('');
+    
+
+    const onOfferAmountChanged = (value: string) => {
+        setTokenAmount(value);
+    }
+
+    const onBuyAmountChanged = (value: string) => {
+        setBuyTokenAmount(value);
+    }
+
+    const marketPriceAmount = truncate18Decimals(BigInt(tokenAmount) * 10n**18n) / marketPrice;
 
   return (
-    <div className='w-full rounded-lg flex justify-between items-center p-2 hover:bg-neutral-900'>
-        <div className='flex items-center'>
-            <div className='bg-white rounded-full w-10 h-10 mr-2'></div>
-            <div className='flex flex-col'>
-                <p>{name}</p>
-                <p className='text-gray-700 text-sm'>{symbol}</p>
-            </div>
+    <div className='h-1/2 flex flex-col justify-between'>
+        <div className='w-full rounded-lg flex-col justify-between items-center py-6 px-12'>
+            <div className='h-24'>
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between  w-full">
+                        <label className="text-sm text-text-gray-300">
+                        {offerTokenSymbol} offer amount
+                        </label>
+                        <p className="text-xs">
+                            <span className="text-text-gray-300">Balance: </span>
+                            {truncate18Decimals(offerTokenBalance??0n)}
+                        </p>
+                    </div>
+                </div>
+                <div className="flex items-center justify-between mt-1 h-12">
+                <TokenInput value={tokenAmount} jumpValue={formatEther(offerTokenBalance??0n)} onChange={onOfferAmountChanged}/>
+                </div>
+            </div >
+            <div className='h-12'>
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between  w-full">
+                        <label className="text-sm text-text-gray-300">
+                        {buyTokenSymbol} buy amount
+                        </label>
+                        <p className="text-xs">
+                            <span className="text-text-gray-300">Market price: </span>
+                            {marketPrice.toFixed(2)} {offerTokenSymbol}
+                        </p>
+                    </div>
+                </div>
+                <div className="flex items-center justify-between mt-1 h-12">
+                <TokenInput value={buyTokenAmount} jumpValue={marketPriceAmount.toFixed(3)} onChange={onBuyAmountChanged} jumpLabel='MARKET'/>
+                </div>
+            </div >
         </div>
-        <TokenInput
-            className='w-1/2'
-            value=''
-            maxValue={balance.toString()}
-            onChange={(s) => console.log(s)}
-        />
+        <div className='w-full rounded-lg flex justify-center items-center p-2'>
+            <button className='bg-transparent border border-gray-600 hover:bg-gray-600/25 rounded-md px-8 py-1 text-xl font-sora'>Create order</button>
+        </div>
     </div>
   );
 }

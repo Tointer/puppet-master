@@ -25,7 +25,7 @@ const TokenInput = ({
     }
 
   return (
-    <div className='flex items-center justify-between mt-1 w-full'>
+    <div className='flex items-center justify-between mt-1 w-full bg-opacity-10 bg-black px-2'>
         <MyInput
             className={classNames(className)}
             value={value ? value.toString() : ''}

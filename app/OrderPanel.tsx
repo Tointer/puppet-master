@@ -9,10 +9,11 @@ import SellOrder from './order/SellOrder';
 interface OrderPanelProps{
   name: string,
   symbol: string,
-  balance: bigint,
+  remoteTokenBalance: bigint,
+  sourceTokenBalance: bigint,
 }
 
-function OrderPanel({name, symbol, balance}: OrderPanelProps) {
+function OrderPanel({name, symbol, remoteTokenBalance}: OrderPanelProps) {
 
     const [selectedState, setSelectedState] = useState<'Buy'|'Sell'>('Buy');
 
@@ -31,7 +32,11 @@ function OrderPanel({name, symbol, balance}: OrderPanelProps) {
                 Sell
         </button>
       </div>
-      {selectedState === 'Buy' ? <BuyOrder offerTokenSymbol={'USDC'} offerTokenBalance={BigInt(balance)} buyTokenSymbol={symbol} marketPrice={4.12}/> : <SellOrder name={name} symbol={symbol} balance={balance} />}
+      {selectedState === 'Buy' ? 
+        <BuyOrder offerTokenSymbol={'USDC'} offerTokenBalance={BigInt(remoteTokenBalance)} buyTokenSymbol={symbol} marketPrice={4.12}/>
+        : 
+        <SellOrder offerTokenSymbol={'USDC'} offerTokenBalance={BigInt(remoteTokenBalance)} buyTokenSymbol={symbol} marketPrice={4.12} />
+      }
     </>
   );
 }
