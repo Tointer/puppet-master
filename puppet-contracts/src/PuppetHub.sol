@@ -7,6 +7,7 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract PuppetHub is OApp {
     struct Order{
+        address receiver;
         address tokenIn;
         address tokenOut;
         uint32 chainIn;
@@ -28,15 +29,16 @@ contract PuppetHub is OApp {
         address _executor, // the Executor address.
         bytes calldata _extraData // arbitrary data appended by the Executor
     ) internal override {
-        (uint orderId, uint minAmount, address token, address payReceiver) = abi.decode(payload, (uint, uint, address, address));
+        (uint orderId, uint minAmount, address token, address to, address payReceiver) = abi.decode(payload, (uint, uint, address, address, address));
 
         Order memory order = orders[orderId];
         bool isNotExpired = order.deadline > block.timestamp;
         bool isMinAmountSame = order.minAmountOut == minAmount;
         bool isTokenSame = order.tokenOut == token;
         bool isChainSame = order.chainOut == _origin.srcEid;
+        bool isReceiverSame = order.receiver == to;
 
-        if (isNotExpired && isMinAmountSame && isTokenSame && isChainSame) {
+        if (isNotExpired && isMinAmountSame && isTokenSame && isChainSame && isReceiverSame) {
             IERC20(order.tokenIn).transfer(payReceiver, order.amountIn);
             delete orders[orderId];
         }

@@ -27,7 +27,7 @@ contract TokenHolder is OApp  {
         token.transferFrom(msg.sender, address(this), _amount);
         balances[_token][_to] += _amount;
 
-        _send(_orderId, _minAmount, _token, _payReceiver, _lzOptions);
+        _send(_orderId, _minAmount, _token, _to, _payReceiver, _lzOptions);
     }
 
     /* @dev Quotes the gas needed to pay for the full omnichain transaction.
@@ -38,11 +38,11 @@ contract TokenHolder is OApp  {
         uint _orderId,
         uint256 _minAmount,
         address _token,
+        address _to,
         address _payReceiver,
-        bytes32 _orderSalt,
         bytes calldata _options // Message execution options
     ) public view returns (uint256 nativeFee) {
-        bytes memory _payload = createPayload(_orderId, _minAmount, _token, _payReceiver);
+        bytes memory _payload = createPayload(_orderId, _minAmount, _token, _to, _payReceiver);
         MessagingFee memory fee = _quote(destId, _payload, _options, false);
         return fee.nativeFee;
     }
@@ -52,10 +52,11 @@ contract TokenHolder is OApp  {
         uint _orderId,
         uint256 _minAmount,
         address _token,
+        address _to,
         address _payReceiver,
         bytes calldata _options
     ) internal {
-        bytes memory _payload = createPayload(_orderId, _minAmount, _token, _payReceiver);
+        bytes memory _payload = createPayload(_orderId, _minAmount, _token, _to, _payReceiver);
         _lzSend(
             destId, // Destination chain's endpoint ID.
             _payload, // Encoded message payload being sent.
@@ -82,8 +83,9 @@ contract TokenHolder is OApp  {
         uint _orderId,
         uint256 _minAmount,
         address _token,
+        address _to,
         address _payReceiver
     ) public view returns (bytes memory) {
-        return abi.encode(_orderId, _minAmount, _token, _payReceiver);
+        return abi.encode(_orderId, _minAmount, _token, _to, _payReceiver);
     }
 }
