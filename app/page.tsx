@@ -42,7 +42,7 @@ function App() {
           + (account && selectedCoin !== undefined ? ' opacity-100 visible' : ' opacity-0 invisible')
         }
         >
-          <OrderPanel name={selectedCoin?.name??''} symbol={selectedCoin?.symbol??''} remoteTokenBalance={selectedCoin?.balance??0n} sourceTokenBalance={10n**19n} />
+          <OrderPanel name={selectedCoin?.name??''} symbol={selectedCoin?.symbol??''} remoteTokenBalance={selectedCoin?.balance??0n} sourceTokenSymbol={'USDC'} sourceTokenBalance={10n**19n} />
         </div>
       </div>
     </div>
