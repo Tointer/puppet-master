@@ -9,7 +9,7 @@ contract TokenHolder is OApp  {
     uint32 public immutable destId;
 
     //token address => user address => balance
-    mapping(address => mapping(address => uint)) public balances;
+    mapping(address => mapping(address => uint)) public balanceOf;
     mapping(bytes32 => bool) public processed;
 
     constructor(address _endpoint, address _owner, uint16 _destId) OApp(_endpoint, _owner) Ownable(_owner) {
@@ -25,9 +25,15 @@ contract TokenHolder is OApp  {
 
         IERC20 token = IERC20(_token);
         token.transferFrom(msg.sender, address(this), _amount);
-        balances[_token][_to] += _amount;
+        balanceOf[_token][_to] += _amount;
 
         _send(_orderId, _minAmount, _token, _to, _payReceiver, _lzOptions);
+    }
+
+    function deposit(address _token, address _to, uint256 _amount) public {
+        IERC20 token = IERC20(_token);
+        token.transferFrom(msg.sender, address(this), _amount);
+        balanceOf[_token][_to] += _amount;
     }
 
     /* @dev Quotes the gas needed to pay for the full omnichain transaction.
@@ -73,10 +79,10 @@ contract TokenHolder is OApp  {
         address _executor, // the Executor address.
         bytes calldata _extraData // arbitrary data appended by the Executor
     ) internal override {
-        (address token, address from, address to, uint256 amount, bytes32 orderSalt) = abi.decode(payload, (address, address, address, uint256, bytes32));
+        (address token, address from, address to, uint256 amount) = abi.decode(payload, (address, address, address, uint256));
 
         IERC20(token).transfer(to, amount);
-        balances[token][from] -= amount;
+        balanceOf[token][from] -= amount;
     }
 
     function createPayload(

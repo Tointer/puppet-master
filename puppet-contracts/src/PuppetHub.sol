@@ -60,5 +60,47 @@ contract PuppetHub is OApp {
         IERC20(token).transfer(msg.sender, order.amountIn); //will revert if order not initialized
         delete orders[orderIndex];
     }
+
+    function depositFor(uint _orderId, address _payReceiver, uint256 _amount, bytes calldata _lzOptions) public {
+        Order memory order = orders[_orderId];
+        require(order.deadline > block.timestamp, "Order expired");
+        require(_amount >= order.minAmountOut, "Amount less than minAmount");
+
+        IERC20 token = IERC20(order.tokenOut);
+        token.transferFrom(msg.sender, order.receiver, _amount);
+
+        _send(order.tokenIn, order.receiver, _payReceiver, order.chainOut, _amount, _lzOptions);
+
+        delete orders[_orderId];
+    }
+
+    // Sends a message from the source to destination chain.
+    function _send(
+        address _token,
+        address _from,
+        address _to,
+        uint32 _destId,
+        uint _amount,
+        bytes calldata _options
+    ) internal {
+        bytes memory _payload = createPayload(_token, _from, _to, _amount);
+        _lzSend(
+            _destId, // Destination chain's endpoint ID.
+            _payload, // Encoded message payload being sent.
+            _options, // Message execution options (e.g., gas to use on destination).
+            MessagingFee(msg.value, 0), // Fee struct containing native gas and ZRO token.
+            payable(msg.sender) // The refund address in case the send call reverts.
+        );
+    }
+
+    
+    function createPayload(
+        address _token,
+        address _from,
+        address _to,
+        uint amount
+    ) public view returns (bytes memory) {
+        return abi.encode(_token, _from, _to, amount);
+    }
     
 }
