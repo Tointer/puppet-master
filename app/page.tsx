@@ -3,6 +3,7 @@
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import { ConnectKitButton } from 'connectkit';
 import CoinPanel from './CoinPanel';
+import OrderPanel from './OrderPanel';
 import Image from 'next/image'
 import { useState } from 'react';
 
@@ -36,9 +37,13 @@ function App() {
       className='w-[400px] h-[600px] bg-contain bg-no-repeat bg-center'
       style={{backgroundImage: `url('/puppet-hand.png')`}}
       >
-        {account && selectedCoin !== '' && 
-          <div className='h-full w-full bg-black rounded-2xl bg-clip-padding backdrop-filter backdrop-blur-2xl bg-opacity-10 border border-gray-100'></div>
+        <div 
+        className={'h-full w-full bg-black rounded-2xl bg-clip-padding backdrop-filter backdrop-blur-2xl bg-opacity-10 border border-gray-100 transition-opacity duration-500 ease-out' 
+          + (account && selectedCoin !== '' ? ' opacity-100 visible' : ' opacity-0 invisible')
         }
+        >
+          <OrderPanel name={selectedCoin} symbol='GMX' balance={10n**19n} />
+        </div>
       </div>
     </div>
   );
