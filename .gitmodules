@@ -10,3 +10,6 @@
 [submodule "puppet-contracts/lib/LayerZero-v2"]
 	path = puppet-contracts/lib/LayerZero-v2
 	url = https://github.com/LayerZero-Labs/LayerZero-v2
+[submodule "puppet-contracts/lib/solmate"]
+	path = puppet-contracts/lib/solmate
+	url = https://github.com/transmissions11/solmate
