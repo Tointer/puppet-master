@@ -16,6 +16,7 @@ function App() {
     name: string,
     symbol: string,
     balance: bigint,
+    iconPath: string,
   }
 
   //selected coin useState
@@ -25,13 +26,13 @@ function App() {
     setSelectedCoin(coin);
   }
 
-  const coins = [{name: 'GMX from Arbitrum', symbol: 'GMX', balance: 0n * 10n**17n}, {name: 'BALD from Base', symbol: 'BALD', balance: 0n}];
+  const coins = [{name: 'GMX from Arbitrum', symbol: 'GMX', balance: 0n * 10n**17n, iconPath: '/gmx_icon.webp'}, {name: 'BALD from Base', symbol: 'BALD', balance: 0n, iconPath: '/bald_icon.webp'}];
 
   return (
     <div className='flex items-center w-full place-content-center mt-8 gap-8'>
       <div className='flex flex-col m-8 border border-gray-100 w-[400px] h-[600px] items-center p-5 rounded-2xl'>
         <div className='mb-2'><ConnectKitButton /></div>
-        {coins.map((coin: CoinParams) => <CoinPanel name={coin.name} symbol={coin.symbol} balance={coin.balance} key={coin.symbol} onClick={onCoinClick} />)}
+        {coins.map((coin: CoinParams) => <CoinPanel name={coin.name} symbol={coin.symbol} balance={coin.balance} key={coin.symbol} iconPath={coin.iconPath} onClick={onCoinClick} />)}
       </div>
       <div
       className='w-[400px] h-[600px] bg-contain bg-no-repeat bg-center'
