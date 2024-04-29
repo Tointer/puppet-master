@@ -12,9 +12,9 @@ solc_version = "0.8.22"
 
 [rpc_endpoints]
 scroll_testnet = "https://scroll-sepolia.drpc.org"
-arbitrum_sepolia = "https://endpoints.omniatech.io/v1/arbitrum/sepolia/public"
+arbitrum_sepolia = "https://arbitrum-sepolia.blockpi.network/v1/rpc/public"
 
 [etherscan]
-arbitrum = {key = "${ARBISCAN_KEY}", url = "https://api.arbiscan.io/api"}
+arbitrum_sepolia = {key = "${ARBISCAN_KEY}", url = "https://api-sepolia.arbiscan.io/api"}
 scroll_testnet = {key = "${SCROLLSCAN_KEY}", url = "https://api.scrollscan.com/api"}
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
