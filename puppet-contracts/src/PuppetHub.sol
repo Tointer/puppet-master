@@ -5,17 +5,18 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { OApp, Origin, MessagingFee } from "@layerzero-v2/oapp/OApp.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
+struct Order{
+    address receiver;
+    address tokenIn;
+    address tokenOut;
+    uint32 chainIn;
+    uint32 chainOut;
+    uint256 amountIn;
+    uint256 minAmountOut;
+    uint64 deadline;
+}
+
 contract PuppetHub is OApp {
-    struct Order{
-        address receiver;
-        address tokenIn;
-        address tokenOut;
-        uint32 chainIn;
-        uint32 chainOut;
-        uint256 amountIn;
-        uint256 minAmountOut;
-        uint64 deadline;
-    }
 
     mapping(uint => Order) public orders;
     uint public nextOrderId;
@@ -46,7 +47,7 @@ contract PuppetHub is OApp {
         //not reverting to not block LZ execution, resolvers should calculate possible failures
     }
 
-    function lockAndInitiateOrder(Order memory order) public {
+     function lockAndInitiateOrder(Order memory order) public {
         IERC20(order.tokenIn).transferFrom(msg.sender, address(this), order.amountIn);
         orders[nextOrderId] = order;
         nextOrderId++;
