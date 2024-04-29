@@ -34,9 +34,9 @@ function OrderPanel({name, symbol, remoteTokenBalance, sourceTokenSymbol, source
         </button>
       </div>
       {selectedState === 'Buy' ? 
-        <BuyOrder offerTokenSymbol={'USDC'} offerTokenBalance={BigInt(sourceTokenBalance)} buyTokenSymbol={symbol} marketPrice={4.12}/>
+        <BuyOrder offerTokenSymbol={'USDC'} offerTokenBalance={BigInt(sourceTokenBalance)} buyTokenSymbol={symbol} marketPrice={26.12}/>
         : 
-        <SellOrder offerTokenSymbol={symbol} offerTokenBalance={BigInt(remoteTokenBalance)} buyTokenSymbol={sourceTokenSymbol} marketPrice={1/4.12} />
+        <SellOrder offerTokenSymbol={symbol} offerTokenBalance={BigInt(remoteTokenBalance)} buyTokenSymbol={sourceTokenSymbol} marketPrice={1/26.12} />
       }
     </>
   );

@@ -25,7 +25,7 @@ function App() {
     setSelectedCoin(coin);
   }
 
-  const coins = [{name: 'GMX from Arbitrum', symbol: 'GMX', balance: 1201n * 10n**17n}, {name: 'BALD from Base', symbol: 'BALD', balance: 0n}];
+  const coins = [{name: 'GMX from Arbitrum', symbol: 'GMX', balance: 0n * 10n**17n}, {name: 'BALD from Base', symbol: 'BALD', balance: 0n}];
 
   return (
     <div className='flex items-center w-full place-content-center mt-8 gap-8'>
