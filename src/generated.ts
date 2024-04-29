@@ -321,98 +321,178 @@ export const puppetHubConfig = {
 
 export const scrollMockTokenAbi = [
   {
-    type: 'event',
+    type: 'constructor',
     inputs: [
-      { name: 'owner', type: 'address', indexed: true },
-      { name: 'spender', type: 'address', indexed: true },
-      { name: 'value', type: 'uint256', indexed: false },
+      { name: '_name', internalType: 'string', type: 'string' },
+      { name: '_symbol', internalType: 'string', type: 'string' },
+      { name: '_decimals', internalType: 'uint8', type: 'uint8' },
     ],
-    name: 'Approval',
-  },
-  {
-    type: 'event',
-    inputs: [
-      { name: 'from', type: 'address', indexed: true },
-      { name: 'to', type: 'address', indexed: true },
-      { name: 'value', type: 'uint256', indexed: false },
-    ],
-    name: 'Transfer',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'owner', type: 'address' },
-      { name: 'spender', type: 'address' },
-    ],
-    name: 'allowance',
-    outputs: [{ type: 'uint256' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'spender', type: 'address' },
-      { name: 'amount', type: 'uint256' },
-    ],
-    name: 'approve',
-    outputs: [{ type: 'bool' }],
     stateMutability: 'nonpayable',
   },
   {
     type: 'function',
-    inputs: [{ name: 'account', type: 'address' }],
-    name: 'balanceOf',
-    outputs: [{ type: 'uint256' }],
+    inputs: [],
+    name: 'DOMAIN_SEPARATOR',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
     stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '', internalType: 'address', type: 'address' },
+      { name: '', internalType: 'address', type: 'address' },
+    ],
+    name: 'allowance',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'spender', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'approve',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'balanceOf',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_from', internalType: 'address', type: 'address' },
+      { name: '_amount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'burn',
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
     inputs: [],
     name: 'decimals',
-    outputs: [{ type: 'uint8' }],
+    outputs: [{ name: '', internalType: 'uint8', type: 'uint8' }],
     stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_to', internalType: 'address', type: 'address' },
+      { name: '_amount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'mint',
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
     inputs: [],
     name: 'name',
-    outputs: [{ type: 'string' }],
+    outputs: [{ name: '', internalType: 'string', type: 'string' }],
     stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'nonces',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'owner', internalType: 'address', type: 'address' },
+      { name: 'spender', internalType: 'address', type: 'address' },
+      { name: 'value', internalType: 'uint256', type: 'uint256' },
+      { name: 'deadline', internalType: 'uint256', type: 'uint256' },
+      { name: 'v', internalType: 'uint8', type: 'uint8' },
+      { name: 'r', internalType: 'bytes32', type: 'bytes32' },
+      { name: 's', internalType: 'bytes32', type: 'bytes32' },
+    ],
+    name: 'permit',
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
     inputs: [],
     name: 'symbol',
-    outputs: [{ type: 'string' }],
+    outputs: [{ name: '', internalType: 'string', type: 'string' }],
     stateMutability: 'view',
   },
   {
     type: 'function',
     inputs: [],
     name: 'totalSupply',
-    outputs: [{ type: 'uint256' }],
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
   {
     type: 'function',
     inputs: [
-      { name: 'recipient', type: 'address' },
-      { name: 'amount', type: 'uint256' },
+      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'transfer',
-    outputs: [{ type: 'bool' }],
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
     stateMutability: 'nonpayable',
   },
   {
     type: 'function',
     inputs: [
-      { name: 'sender', type: 'address' },
-      { name: 'recipient', type: 'address' },
-      { name: 'amount', type: 'uint256' },
+      { name: 'from', internalType: 'address', type: 'address' },
+      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'transferFrom',
-    outputs: [{ type: 'bool' }],
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
     stateMutability: 'nonpayable',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'owner',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'spender',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'amount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'Approval',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'from', internalType: 'address', type: 'address', indexed: true },
+      { name: 'to', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: 'amount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'Transfer',
   },
 ] as const
 
@@ -1039,6 +1119,16 @@ export const useReadScrollMockToken = /*#__PURE__*/ createUseReadContract({
 })
 
 /**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link scrollMockTokenAbi}__ and `functionName` set to `"DOMAIN_SEPARATOR"`
+ */
+export const useReadScrollMockTokenDomainSeparator =
+  /*#__PURE__*/ createUseReadContract({
+    abi: scrollMockTokenAbi,
+    address: scrollMockTokenAddress,
+    functionName: 'DOMAIN_SEPARATOR',
+  })
+
+/**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link scrollMockTokenAbi}__ and `functionName` set to `"allowance"`
  */
 export const useReadScrollMockTokenAllowance =
@@ -1076,6 +1166,17 @@ export const useReadScrollMockTokenName = /*#__PURE__*/ createUseReadContract({
   address: scrollMockTokenAddress,
   functionName: 'name',
 })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link scrollMockTokenAbi}__ and `functionName` set to `"nonces"`
+ */
+export const useReadScrollMockTokenNonces = /*#__PURE__*/ createUseReadContract(
+  {
+    abi: scrollMockTokenAbi,
+    address: scrollMockTokenAddress,
+    functionName: 'nonces',
+  },
+)
 
 /**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link scrollMockTokenAbi}__ and `functionName` set to `"symbol"`
@@ -1117,6 +1218,38 @@ export const useWriteScrollMockTokenApprove =
   })
 
 /**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link scrollMockTokenAbi}__ and `functionName` set to `"burn"`
+ */
+export const useWriteScrollMockTokenBurn = /*#__PURE__*/ createUseWriteContract(
+  {
+    abi: scrollMockTokenAbi,
+    address: scrollMockTokenAddress,
+    functionName: 'burn',
+  },
+)
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link scrollMockTokenAbi}__ and `functionName` set to `"mint"`
+ */
+export const useWriteScrollMockTokenMint = /*#__PURE__*/ createUseWriteContract(
+  {
+    abi: scrollMockTokenAbi,
+    address: scrollMockTokenAddress,
+    functionName: 'mint',
+  },
+)
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link scrollMockTokenAbi}__ and `functionName` set to `"permit"`
+ */
+export const useWriteScrollMockTokenPermit =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: scrollMockTokenAbi,
+    address: scrollMockTokenAddress,
+    functionName: 'permit',
+  })
+
+/**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link scrollMockTokenAbi}__ and `functionName` set to `"transfer"`
  */
 export const useWriteScrollMockTokenTransfer =
@@ -1153,6 +1286,36 @@ export const useSimulateScrollMockTokenApprove =
     abi: scrollMockTokenAbi,
     address: scrollMockTokenAddress,
     functionName: 'approve',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link scrollMockTokenAbi}__ and `functionName` set to `"burn"`
+ */
+export const useSimulateScrollMockTokenBurn =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: scrollMockTokenAbi,
+    address: scrollMockTokenAddress,
+    functionName: 'burn',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link scrollMockTokenAbi}__ and `functionName` set to `"mint"`
+ */
+export const useSimulateScrollMockTokenMint =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: scrollMockTokenAbi,
+    address: scrollMockTokenAddress,
+    functionName: 'mint',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link scrollMockTokenAbi}__ and `functionName` set to `"permit"`
+ */
+export const useSimulateScrollMockTokenPermit =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: scrollMockTokenAbi,
+    address: scrollMockTokenAddress,
+    functionName: 'permit',
   })
 
 /**
