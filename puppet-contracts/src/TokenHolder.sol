@@ -12,11 +12,18 @@ contract TokenHolder is OApp  {
     mapping(address => mapping(address => uint)) public balanceOf;
     mapping(bytes32 => bool) public processed;
 
-    constructor(address _endpoint, address _owner, uint16 _destId) OApp(_endpoint, _owner) Ownable(_owner) {
+    constructor(address _endpoint, address _owner, uint32 _destId) OApp(_endpoint, _owner) Ownable(_owner) {
         destId = _destId;
     }
 
-    function depositFor(address _token, address _to, address _payReceiver, uint256 _amount, uint _minAmount, uint _orderId, bytes calldata _lzOptions) public {
+    function depositFor(
+        address _token, 
+        address _to, address _payReceiver, 
+        uint256 _amount, 
+        uint _minAmount, 
+        uint _orderId, 
+        bytes calldata _lzOptions) 
+    public {
         require(_amount >= _minAmount, "Amount less than minAmount");
 
         bytes32 orderHash = keccak256(abi.encode(_orderId, _minAmount, _token));
