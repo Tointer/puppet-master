@@ -7,6 +7,7 @@ import { formatEther, maxUint256, parseEther } from 'viem';
 import { 
     useWritePuppetHubLockAndInitiateOrder,
     useWriteScrollMockTokenApprove,
+    useWriteScrollMockTokenMint,
     useReadScrollMockTokenAllowance,
     useReadScrollMockTokenBalanceOf,
   } from '../../src/generated'
@@ -18,13 +19,14 @@ interface BuyOrderProps{
     offerTokenBalance: bigint,
     buyTokenSymbol: string,
     marketPrice: number,
+    onOrderCreated: (nativeTokensAmount: number, remoteTokensAmount: number) => void,
 }
 
 const truncate18Decimals = (number: bigint, decimals: number = 4): number => {
     return Number(number / 10n ** BigInt(18 - decimals)) / 10 ** decimals;
   };
 
-function BuyOrder({offerTokenSymbol, offerTokenBalance, buyTokenSymbol, marketPrice}: BuyOrderProps) {
+function BuyOrder({offerTokenSymbol, offerTokenBalance, buyTokenSymbol, marketPrice, onOrderCreated}: BuyOrderProps) {
     const { address } = useAccount();
     const [tokenAmount, setTokenAmount] = useState<string>('');
     const [buyTokenAmount, setBuyTokenAmount] = useState<string>('');
@@ -45,6 +47,13 @@ function BuyOrder({offerTokenSymbol, offerTokenBalance, buyTokenSymbol, marketPr
         isPending: isPendingApprove,
     } = useWriteScrollMockTokenApprove();
     const approveTx = useWaitForTransactionReceipt({hash: approveHash});
+
+    const {
+        data: mintHash,
+        writeContract: mintWriteContract,
+        isPending: isPendingMint,
+    } = useWriteScrollMockTokenMint();
+    const mintTx = useWaitForTransactionReceipt({hash: mintHash});
 
     const createOrderTx = useWaitForTransactionReceipt({hash: createOrderHash});
 
@@ -75,8 +84,13 @@ function BuyOrder({offerTokenSymbol, offerTokenBalance, buyTokenSymbol, marketPr
         createOrderWriteContract({args: [order]});
     }
 
+    const mintTokens = () => {
+        mintWriteContract({args: [address!, parseEther('7007')]});
+    }
+
     useEffect(() => {
         if(createOrderTx.isSuccess){
+            onOrderCreated(Number.parseFloat(tokenAmount), Number.parseFloat(buyTokenAmount));
             setTokenAmount('');
             setBuyTokenAmount('');
             offerTokenUserBalanceRefetch();
@@ -89,6 +103,12 @@ function BuyOrder({offerTokenSymbol, offerTokenBalance, buyTokenSymbol, marketPr
             allowanceRefetch().then(() => createOrder());
         }
     }, [approveTx.isSuccess])
+
+    useEffect(() => {
+        if(mintTx.isSuccess){
+            offerTokenUserBalanceRefetch();
+        }
+    }, [mintTx.isSuccess])
 
     const createOrderLoading = createOrderTx.isLoading || isPEndingCreateOrder || isPendingApprove || approveTx.isLoading;
     
@@ -104,7 +124,7 @@ function BuyOrder({offerTokenSymbol, offerTokenBalance, buyTokenSymbol, marketPr
     const marketPriceAmount = (Number.parseFloat(tokenAmount) / marketPrice);
 
   return (
-    <div className='h-1/2 flex flex-col justify-between'>
+    <div className='w-[400px] h-[520px]  flex flex-col justify-between'>
         <div className='w-full rounded-lg flex-col justify-between items-center py-6 px-12'>
             <div className='h-24'>
                 <div className="flex items-center justify-between">
@@ -139,11 +159,15 @@ function BuyOrder({offerTokenSymbol, offerTokenBalance, buyTokenSymbol, marketPr
                 </div>
             </div >
         </div>
-        <div className='w-full rounded-lg flex justify-center items-center p-2'>
+        <div className='w-full rounded-lg flex justify-center items-center p-2 mt-6'>
             <button disabled={createOrderLoading} className='bg-transparent border border-gray-600 hover:bg-gray-600/25 rounded-md px-8 py-1 text-xl font-sora flex justify-center items-center' onClick={createOrder}>
                 {createOrderLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Create order
             </button>
+        </div>
+        <div className='h-full flex flex-col justify-end'>
+          <button onClick={mintTokens} className='bg-transparent border border-gray-600 hover:bg-gray-600/25 rounded-md px-8 py-1 text-xs font-sora flex justify-center items-center'>Mint testnet USDC</button>
+          <p className='text-xs text-center'>Some functionalities is mocked to show how it will work with actual solvers, but protocol is fully functional</p>
         </div>
     </div>
   );

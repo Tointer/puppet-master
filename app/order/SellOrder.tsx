@@ -1,9 +1,19 @@
 'use client';
 
-import { useAccount, useConnect, useDisconnect } from 'wagmi';
-import { useState } from 'react';
+import { useAccount, useConnect, useWaitForTransactionReceipt } from 'wagmi';
+import { useState, useEffect } from 'react';
 import TokenInput from '../components/TokenInput';
 import { formatEther, maxUint256, parseEther } from 'viem';
+import { 
+    useWritePuppetHubLockAndInitiateOrder,
+    useWriteScrollMockTokenApprove,
+    useWriteScrollMockTokenMint,
+    useReadScrollMockTokenAllowance,
+    useReadScrollMockTokenBalanceOf,
+  } from '../../src/generated';
+  import {contracts} from '@/lib/wagmiConfig';
+  import { Loader2 } from "lucide-react"
+
 
 interface SellOrderProps{
     offerTokenSymbol: string,
@@ -18,8 +28,58 @@ const truncate18Decimals = (number: bigint, decimals: number = 4): number => {
 
 function SellOrder({offerTokenSymbol, offerTokenBalance, buyTokenSymbol, marketPrice}: SellOrderProps) {
 
+    const { address } = useAccount();
     const [tokenAmount, setTokenAmount] = useState<string>('');
     const [buyTokenAmount, setBuyTokenAmount] = useState<string>('');
+
+    const {
+        data: createOrderHash,
+        writeContract: createOrderWriteContract,
+        isPending: isPEndingCreateOrder,
+        error: createOrderError,
+    } = useWritePuppetHubLockAndInitiateOrder();
+
+    const {
+        data: mintHash,
+        writeContract: mintWriteContract,
+        isPending: isPendingMint,
+    } = useWriteScrollMockTokenMint();
+    const mintTx = useWaitForTransactionReceipt({hash: mintHash});
+
+    const createOrderTx = useWaitForTransactionReceipt({hash: createOrderHash});
+
+    const createOrder = async () => {
+        const offerTokenAmountParsed = parseEther(tokenAmount);
+        const buyTokenAmountParsed = parseEther(buyTokenAmount);
+
+        if(address === undefined){
+            return;
+        }
+
+        const order = {
+            receiver: address!,
+            tokenIn: contracts.scrollMockToken.address!,
+            tokenOut: contracts.scrollMockToken.address!,
+            chainIn: 40170,
+            chainOut: 40231,
+            amountIn: offerTokenAmountParsed,
+            minAmountOut: buyTokenAmountParsed,
+            deadline: BigInt(Math.floor(Date.now() / 1000) + 60 * 1000),
+        }
+
+        createOrderWriteContract({args: [order]});
+    }
+
+
+    useEffect(() => {
+        if(createOrderTx.isSuccess){
+           setTokenAmount('');
+            setBuyTokenAmount('');
+        }
+    }, [createOrderTx.isSuccess])
+
+
+    const createOrderLoading = createOrderTx.isLoading || isPEndingCreateOrder;
     
 
     const onOfferAmountChanged = (value: string) => {
@@ -30,7 +90,7 @@ function SellOrder({offerTokenSymbol, offerTokenBalance, buyTokenSymbol, marketP
         setBuyTokenAmount(value);
     }
 
-    const marketPriceAmount = truncate18Decimals(BigInt(tokenAmount) * 10n**18n) / marketPrice;
+    const marketPriceAmount = (Number.parseFloat(tokenAmount) / marketPrice);
 
   return (
     <div className='h-1/2 flex flex-col justify-between'>
@@ -68,8 +128,11 @@ function SellOrder({offerTokenSymbol, offerTokenBalance, buyTokenSymbol, marketP
                 </div>
             </div >
         </div>
-        <div className='w-full rounded-lg flex justify-center items-center p-2'>
-            <button className='bg-transparent border border-gray-600 hover:bg-gray-600/25 rounded-md px-8 py-1 text-xl font-sora'>Create order</button>
+        <div className='w-full rounded-lg flex justify-center items-center p-2 mt-6'>
+            <button disabled={createOrderLoading} className='bg-transparent border border-gray-600 hover:bg-gray-600/25 rounded-md px-8 py-1 text-xl font-sora flex justify-center items-center' onClick={createOrder}>
+                {createOrderLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Create order
+            </button>
         </div>
     </div>
   );

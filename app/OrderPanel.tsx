@@ -12,9 +12,10 @@ interface OrderPanelProps{
   remoteTokenBalance: bigint,
   sourceTokenSymbol: string,
   sourceTokenBalance: bigint,
+  onOrderCreated: (nativeTokensAmount: number, remoteTokensAmount: number) => void,
 }
 
-function OrderPanel({name, symbol, remoteTokenBalance, sourceTokenSymbol, sourceTokenBalance}: OrderPanelProps) {
+function OrderPanel({name, symbol, remoteTokenBalance, sourceTokenSymbol, sourceTokenBalance, onOrderCreated}: OrderPanelProps) {
 
     const [selectedState, setSelectedState] = useState<'Buy'|'Sell'>('Buy');
 
@@ -34,7 +35,7 @@ function OrderPanel({name, symbol, remoteTokenBalance, sourceTokenSymbol, source
         </button>
       </div>
       {selectedState === 'Buy' ? 
-        <BuyOrder offerTokenSymbol={'USDC'} offerTokenBalance={BigInt(sourceTokenBalance)} buyTokenSymbol={symbol} marketPrice={26.12}/>
+        <BuyOrder offerTokenSymbol={'USDC'} offerTokenBalance={BigInt(sourceTokenBalance)} buyTokenSymbol={symbol} marketPrice={26.12} onOrderCreated={onOrderCreated}/>
         : 
         <SellOrder offerTokenSymbol={symbol} offerTokenBalance={BigInt(remoteTokenBalance)} buyTokenSymbol={sourceTokenSymbol} marketPrice={1/26.12} />
       }
